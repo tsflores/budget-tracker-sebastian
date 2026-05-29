@@ -17,7 +17,7 @@ const BudgetCategorySchema = new Schema<IBudgetCategory>(
       index: true,
     },
     name: { type: String, required: true },
-    allocated: { type: Number, required: true, defaul: 0 },
+    allocated: { type: Number, required: true, default: 0 },
     color: { type: String, required: true },
     icon: { type: String, required: true },
   },

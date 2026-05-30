@@ -8,10 +8,6 @@ import { uid } from '../lib/utils';
 const router = Router();
 router.use(authMiddleware);
 
-// function uid(req: Request): Types.ObjectId {
-//   return new Types.ObjectId((req as AuthRequest).userId);
-// }
-
 // POST /api/transactions
 router.post('/', async (req: Request, res: Response): Promise<void> => {
   try {

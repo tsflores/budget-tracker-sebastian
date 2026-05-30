@@ -261,7 +261,7 @@ function generateSeedHistory(): MonthlySnapshot[] {
       { id: '3', name: 'Transportation', allocated: 400, spent: Math.round(312 * (1 + Math.cos(i) * 0.2)) },
       { id: '4', name: 'Entertainment', allocated: 300, spent: Math.round(187 * (1 + Math.sin(i * 2) * 0.25)) },
       { id: '5', name: 'Utilities', allocated: 350, spent: Math.round(298 * (1 + Math.cos(i * 1.5) * 0.1)) },
-      { id: '6', name: 'Healthcare', allocated: 200, spent: Math.round(85 * (1 + Math.sin(i * 0.7) * 0.3)) },
+      { id: '6', name: 'Education', allocated: 200, spent: Math.round(85 * (1 + Math.sin(i * 0.7) * 0.3)) },
       { id: '7', name: 'Shopping', allocated: 400, spent: Math.round(356 * (1 + Math.cos(i * 1.8) * 0.2)) },
       { id: '8', name: 'Savings & Investments', allocated: 1500, spent: 1500 },
     ];

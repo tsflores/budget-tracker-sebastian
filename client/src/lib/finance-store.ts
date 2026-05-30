@@ -242,7 +242,7 @@ const defaultBudgetCategories: BudgetCategory[] = [
   { id: '3', name: 'Transportation', allocated: 400, spent: 312, color: '#6B8E9B', icon: 'Car' },
   { id: '4', name: 'Entertainment', allocated: 300, spent: 187, color: '#8B7355', icon: 'Film' },
   { id: '5', name: 'Utilities', allocated: 350, spent: 298, color: '#5C7A8A', icon: 'Zap' },
-  { id: '6', name: 'Healthcare', allocated: 200, spent: 85, color: '#7A9B6B', icon: 'Heart' },
+  { id: '6', name: 'Education', allocated: 200, spent: 85, color: '#7A9B6B', icon: 'GraduationCap' },
   { id: '7', name: 'Shopping', allocated: 400, spent: 356, color: '#9B7A8B', icon: 'ShoppingBag' },
   { id: '8', name: 'Savings & Investments', allocated: 1500, spent: 1500, color: '#B5A167', icon: 'TrendingUp' },
 ];

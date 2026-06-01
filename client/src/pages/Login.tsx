@@ -78,7 +78,7 @@ export default function Login() {
             <button
               type="submit"
               disabled={isSubmitting}
-              className="w-full rounded-lg bg-[oklch(0.73_0.08_85)] hover:bg-[oklch(0.68_0.09_85)] text-[oklch(0.18_0.05_250)] font-semibold text-sm py-3 transition disabled:opacity-60 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+              className="w-full rounded-lg bg-gold hover:bg-[oklch(0.68_0.09_85)] text-navy-dark font-semibold text-sm py-3 transition disabled:opacity-60 disabled:cursor-not-allowed flex items-center justify-center gap-2"
             >
               {isSubmitting && <Loader2 className="size-4 animate-spin" />}
               Sign In
@@ -89,7 +89,7 @@ export default function Login() {
         {/* Register link */}
         <p className="mt-6 text-center text-sm text-muted-foreground">
           Don't have an account?{' '}
-          <Link href="/register" className="text-[oklch(0.73_0.08_85)] hover:text-[oklch(0.83_0.06_85)] font-medium transition">
+          <Link href="/register" className="text-gold hover:text-gold-light font-medium transition">
             Create one
           </Link>
         </p>

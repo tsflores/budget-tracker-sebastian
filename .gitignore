@@ -6,9 +6,6 @@ node_modules/
 .env.local
 server/.env
 
-# Build outputs
-dist/
-build/
 
 # OS
 .DS_Store

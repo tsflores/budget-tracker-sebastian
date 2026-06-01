@@ -144,7 +144,7 @@ export function OnboardingCarousel({ onComplete }: OnboardingCarouselProps) {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.3, ease: [0.23, 1, 0.32, 1] }}
-      className="fixed inset-0 z-[100] flex items-center justify-center p-6"
+      className="fixed inset-0 z-100 flex items-center justify-center p-6"
     >
       {/* Backdrop - no dismiss on click since this is required */}
       <div className="absolute inset-0 bg-navy-dark/90 backdrop-blur-md" />
@@ -166,7 +166,7 @@ export function OnboardingCarousel({ onComplete }: OnboardingCarouselProps) {
             transition={{ duration: 0.25, ease: [0.23, 1, 0.32, 1] }}
           >
             {/* Header */}
-            <div className="h-40 bg-gradient-to-b from-gold/20 to-gold/5 flex items-center justify-center relative overflow-hidden">
+            <div className="h-40 bg-linear-to-b from-gold/20 to-gold/5 flex items-center justify-center relative overflow-hidden">
               <div className="absolute top-4 left-8 w-16 h-16 rounded-full bg-gold/5 blur-xl" />
               <div className="absolute bottom-2 right-12 w-20 h-20 rounded-full bg-gold/5 blur-xl" />
               <div className="w-16 h-16 rounded-2xl bg-navy/60 border border-gold/20 backdrop-blur-sm flex items-center justify-center">
@@ -268,7 +268,7 @@ export function OnboardingCarousel({ onComplete }: OnboardingCarouselProps) {
         ) : (
           <>
             {/* Feature Steps */}
-            <div className={`h-40 bg-gradient-to-b ${steps[currentStep].accent} flex items-center justify-center relative overflow-hidden`}>
+            <div className={`h-40 bg-linear-to-b ${steps[currentStep].accent} flex items-center justify-center relative overflow-hidden`}>
               <div className="absolute top-4 left-8 w-16 h-16 rounded-full bg-gold/5 blur-xl" />
               <div className="absolute bottom-2 right-12 w-20 h-20 rounded-full bg-gold/5 blur-xl" />
               

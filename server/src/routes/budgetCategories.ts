@@ -65,7 +65,7 @@ router.post('/', async (req: Request, res: Response): Promise<void> => {
 router.put('/:id', async (req: Request, res: Response): Promise<void> => {
   try {
     const userId = uid(req);
-    const { id } = req.params;
+    const id = String(req.params.id);
 
     if (!Types.ObjectId.isValid(id)) {
       res.status(400).json({ message: 'Invalid ID' });
@@ -108,7 +108,7 @@ router.put('/:id', async (req: Request, res: Response): Promise<void> => {
 router.delete('/:id', async (req: Request, res: Response): Promise<void> => {
   try {
     const userId = uid(req);
-    const { id } = req.params;
+    const id = String(req.params.id);
 
     if (!Types.ObjectId.isValid(id)) {
       res.status(400).json({ message: 'Invalid ID' });

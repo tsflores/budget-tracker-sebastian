@@ -30,7 +30,7 @@ export function TransactionItem({ transaction, onMakeRecurring }: TransactionIte
   const isIncome = transaction.type === 'income';
   const [popoverOpen, setPopoverOpen] = useState(false);
   
-  const formattedDate = new Date(transaction.date).toLocaleDateString('en-US', {
+  const formattedDate = new Date(transaction.date + 'T00:00:00').toLocaleDateString('en-US', {
     month: 'short',
     day: 'numeric',
   });

@@ -27,7 +27,7 @@ function deriveState(raw: FullState): FinanceState {
   const mo = now.getMonth();
 
   const monthTxs = raw.transactions.filter(t => {
-    const d = new Date(t.date);
+    const d = new Date(t.date + 'T00:00:00');
     return d.getFullYear() === yr && d.getMonth() === mo;
   });
 

@@ -1,10 +1,15 @@
 import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import NotFound from "@/pages/NotFound";
-import { Route, Switch } from "wouter";
+import Login from "@/pages/Login";
+import Register from "@/pages/Register";
+import { Route, Switch, useLocation } from "wouter";
+import { useEffect } from "react";
+import { Loader2 } from "lucide-react";
 import ErrorBoundary from "./components/ErrorBoundary";
 import { ThemeProvider } from "./contexts/ThemeContext";
 import { FinanceProvider, useFinanceContext } from "./contexts/FinanceContext";
+import { AuthProvider, useAuth } from "./contexts/AuthContext";
 import { BottomNav } from "./components/BottomNav";
 import { AddTransactionSheet } from "./components/AddTransactionSheet";
 import Home from "./pages/Home";
@@ -17,50 +22,92 @@ import History from "./pages/History";
 import Settings from "./pages/Settings";
 import { InstallBanner } from "./components/InstallBanner";
 import { OnboardingCarousel } from "./components/OnboardingCarousel";
-import { useState, useCallback } from "react";
 
-function Router() {
+function LoadingScreen() {
   return (
-    <Switch>
-      <Route path="/" component={Home} />
-      <Route path="/budget" component={Budget} />
-      <Route path="/transactions" component={Transactions} />
-      <Route path="/forecast" component={Forecast} />
-      <Route path="/recurring" component={Recurring} />
-      <Route path="/about" component={About} />
-      <Route path="/history" component={History} />
-      <Route path="/settings" component={Settings} />
-      <Route path="/404" component={NotFound} />
-      <Route component={NotFound} />
-    </Switch>
+    <div className="min-h-screen bg-background flex items-center justify-center">
+      <Loader2 className="size-8 animate-spin text-gold" />
+    </div>
   );
 }
 
-function AppContent() {
-  const { initialized } = useFinanceContext();
-  const [setupComplete, setSetupComplete] = useState(initialized);
+function ProtectedRoute({ children }: { children: React.ReactNode }) {
+  const { user, isLoading } = useAuth();
+  const [, navigate] = useLocation();
 
-  const handleOnboardingComplete = useCallback(() => {
-    setSetupComplete(true);
-  }, []);
+  useEffect(() => {
+    if (!isLoading && !user) navigate('/login');
+  }, [user, isLoading]);
 
-  // If not initialized, show the onboarding flow (required)
-  if (!setupComplete) {
+  if (isLoading) return <LoadingScreen />;
+  if (!user) return null;
+  return <>{children}</>;
+}
+
+function PublicRoute({ children }: { children: React.ReactNode }) {
+  const { user, isLoading } = useAuth();
+  const [, navigate] = useLocation();
+
+  useEffect(() => {
+    if (!isLoading && user) navigate('/');
+  }, [user, isLoading]);
+
+  if (isLoading) return <LoadingScreen />;
+  if (user) return null;
+  return <>{children}</>;
+}
+
+function AuthenticatedApp() {
+  const { initialized, isLoading } = useFinanceContext();
+
+  if (isLoading) return <LoadingScreen />;
+
+  if (!initialized) {
     return (
       <div className="min-h-screen bg-background">
-        <OnboardingCarousel onComplete={handleOnboardingComplete} />
+        <OnboardingCarousel />
       </div>
     );
   }
 
-  // App is initialized — show the full dashboard
   return (
     <div className="min-h-screen bg-background max-w-lg mx-auto relative">
       <InstallBanner />
-      <Router />
+      <Switch>
+        <Route path="/" component={Home} />
+        <Route path="/budget" component={Budget} />
+        <Route path="/transactions" component={Transactions} />
+        <Route path="/forecast" component={Forecast} />
+        <Route path="/recurring" component={Recurring} />
+        <Route path="/about" component={About} />
+        <Route path="/history" component={History} />
+        <Route path="/settings" component={Settings} />
+        <Route path="/404" component={NotFound} />
+        <Route component={NotFound} />
+      </Switch>
       <AddTransactionSheet />
       <BottomNav />
     </div>
+  );
+}
+
+function AppRouter() {
+  return (
+    <Switch>
+      <Route path="/login">
+        <PublicRoute><Login /></PublicRoute>
+      </Route>
+      <Route path="/register">
+        <PublicRoute><Register /></PublicRoute>
+      </Route>
+      <Route>
+        <ProtectedRoute>
+          <FinanceProvider>
+            <AuthenticatedApp />
+          </FinanceProvider>
+        </ProtectedRoute>
+      </Route>
+    </Switch>
   );
 }
 
@@ -68,9 +115,9 @@ function App() {
   return (
     <ErrorBoundary>
       <ThemeProvider defaultTheme="dark">
-        <FinanceProvider>
+        <AuthProvider>
           <TooltipProvider>
-            <Toaster 
+            <Toaster
               position="top-center"
               toastOptions={{
                 style: {
@@ -81,9 +128,9 @@ function App() {
                 },
               }}
             />
-            <AppContent />
+            <AppRouter />
           </TooltipProvider>
-        </FinanceProvider>
+        </AuthProvider>
       </ThemeProvider>
     </ErrorBoundary>
   );

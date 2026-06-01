@@ -107,7 +107,7 @@ function getRecurringOccurrencesInMonth(
 /**
  * Generate forecast using recurring transactions for accurate projections
  */
-function generateForecast(
+export function generateForecast(
   balance: number,
   monthlyIncome: number,
   monthlyExpenses: number,

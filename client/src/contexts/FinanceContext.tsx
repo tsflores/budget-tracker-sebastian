@@ -6,20 +6,22 @@ import type { MonthlySnapshot } from '@/lib/history-store';
 
 interface FinanceContextType extends FinanceState {
   initialized: boolean;
-  initialize: (startingBalance: number) => void;
-  reset: () => void;
+  isLoading: boolean;
+  initialize: (startingBalance: number) => Promise<void>;
+  reset: () => Promise<void>;
   refresh: () => void;
-  createTransaction: (transaction: Omit<Transaction, 'id'>) => void;
-  createRecurring: (recurring: Omit<RecurringTransaction, 'id' | 'nextDueDate' | 'isActive'>) => void;
-  editRecurring: (id: string, updates: Partial<RecurringTransaction>) => void;
-  removeRecurring: (id: string) => void;
-  toggleRecurring: (id: string) => void;
-  markAsRecurring: (transactionId: string, frequency: RecurringFrequency) => void;
-  editBudgetAllocation: (categoryId: string, newAllocated: number) => void;
-  updateBalance: (newBalance: number) => void;
-  addCategory: (category: Omit<BudgetCategory, 'id' | 'spent'>) => void;
-  editCategory: (categoryId: string, updates: Partial<Omit<BudgetCategory, 'id' | 'spent'>>) => void;
-  removeCategory: (categoryId: string) => void;
+  createTransaction: (transaction: Omit<Transaction, 'id'>) => Promise<void>;
+  removeTransaction: (id: string) => Promise<void>;
+  createRecurring: (recurring: Omit<RecurringTransaction, 'id' | 'nextDueDate' | 'isActive'>) => Promise<void>;
+  editRecurring: (id: string, updates: Partial<RecurringTransaction>) => Promise<void>;
+  removeRecurring: (id: string) => Promise<void>;
+  toggleRecurring: (id: string) => Promise<void>;
+  markAsRecurring: (transactionId: string, frequency: RecurringFrequency) => Promise<void>;
+  editBudgetAllocation: (categoryId: string, newAllocated: number) => Promise<void>;
+  updateBalance: (newBalance: number) => Promise<void>;
+  addCategory: (category: Omit<BudgetCategory, 'id' | 'spent'>) => Promise<void>;
+  editCategory: (categoryId: string, updates: Partial<Omit<BudgetCategory, 'id' | 'spent'>>) => Promise<void>;
+  removeCategory: (categoryId: string) => Promise<void>;
   // History
   previousMonth: MonthlySnapshot | null;
   snapshots: MonthlySnapshot[];
@@ -28,7 +30,7 @@ interface FinanceContextType extends FinanceState {
     value: string;
     available: boolean;
   };
-  takeSnapshot: (state: FinanceState) => void;
+  takeSnapshot: (state: FinanceState) => Promise<void>;
 }
 
 const FinanceContext = createContext<FinanceContextType | null>(null);

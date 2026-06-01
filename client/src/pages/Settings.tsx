@@ -12,7 +12,6 @@ import {
   Wallet,
   RotateCcw,
   BookOpen,
-  Info,
   Shield,
   Database,
   ChevronRight,
@@ -53,33 +52,20 @@ export default function Settings() {
     setTimeout(() => setBalanceSaved(false), 2000);
   };
 
-  const handleResetAll = () => {
-    reset();
-    // Force reload to trigger onboarding
-    window.location.href = '/';
+  const handleResetAll = async () => {
+    await reset();
+    navigate('/');
   };
 
-  const handleRetriggerOnboarding = () => {
-    reset();
-    window.location.href = '/';
+  const handleRetriggerOnboarding = async () => {
+    await reset();
+    navigate('/');
   };
 
   // Data stats
   const totalTransactions = transactions.length;
   const totalRecurring = recurringTransactions.length;
   const totalSnapshots = snapshots.length;
-  const storageUsed = (() => {
-    try {
-      const data = localStorage.getItem('financeflow_data_v2') || '';
-      const history = localStorage.getItem('financeflow_history_v1') || '';
-      const bytes = new Blob([data, history]).size;
-      if (bytes > 1024 * 1024) return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
-      if (bytes > 1024) return `${(bytes / 1024).toFixed(1)} KB`;
-      return `${bytes} B`;
-    } catch {
-      return 'Unknown';
-    }
-  })();
 
   return (
     <div className="pb-24 safe-top">
@@ -179,13 +165,6 @@ export default function Settings() {
               <span className="text-sm text-foreground">Monthly Snapshots</span>
             </div>
             <span className="text-sm font-mono text-muted-foreground">{totalSnapshots}</span>
-          </div>
-          <div className="p-4 flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <Info className="w-4 h-4 text-muted-foreground" />
-              <span className="text-sm text-foreground">Storage Used</span>
-            </div>
-            <span className="text-sm font-mono text-muted-foreground">{storageUsed}</span>
           </div>
         </div>
       </section>

@@ -9,9 +9,9 @@
  */
 import { useState, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { 
-  LayoutDashboard, RefreshCw, TrendingUp, 
-  ChevronRight, ChevronLeft, Sparkles, DollarSign, Wallet
+import {
+  LayoutDashboard, RefreshCw, TrendingUp,
+  ChevronRight, ChevronLeft, Sparkles, DollarSign, Wallet, Loader2
 } from 'lucide-react';
 import { useFinanceContext } from '@/contexts/FinanceContext';
 
@@ -44,7 +44,7 @@ const steps: OnboardingStep[] = [
 ];
 
 interface OnboardingCarouselProps {
-  onComplete: () => void;
+  onComplete?: () => void;
 }
 
 export function OnboardingCarousel({ onComplete }: OnboardingCarouselProps) {
@@ -54,10 +54,11 @@ export function OnboardingCarousel({ onComplete }: OnboardingCarouselProps) {
   const [balanceInput, setBalanceInput] = useState('');
   const [showBalanceStep, setShowBalanceStep] = useState(false);
   const [error, setError] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleComplete = useCallback(() => {
+  const handleComplete = useCallback(async () => {
     const balance = parseFloat(balanceInput.replace(/[^0-9.-]/g, ''));
-    
+
     if (isNaN(balance) || balanceInput.trim() === '') {
       setError('Please enter a valid starting balance');
       return;
@@ -68,9 +69,15 @@ export function OnboardingCarousel({ onComplete }: OnboardingCarouselProps) {
       return;
     }
 
-    // Initialize the app with the starting balance
-    initialize(balance);
-    onComplete();
+    setIsSubmitting(true);
+    try {
+      await initialize(balance);
+      onComplete?.();
+    } catch {
+      setError('Failed to save. Please try again.');
+    } finally {
+      setIsSubmitting(false);
+    }
   }, [balanceInput, initialize, onComplete]);
 
   const next = useCallback(() => {
@@ -247,9 +254,12 @@ export function OnboardingCarousel({ onComplete }: OnboardingCarouselProps) {
 
                 <button
                   onClick={handleComplete}
-                  className="flex items-center gap-1.5 px-5 py-2.5 rounded-lg bg-gold text-navy-dark text-xs font-semibold hover:bg-gold-light active:scale-[0.97] transition-all duration-160"
+                  disabled={isSubmitting}
+                  className="flex items-center gap-1.5 px-5 py-2.5 rounded-lg bg-gold text-navy-dark text-xs font-semibold hover:bg-gold-light active:scale-[0.97] transition-all duration-160 disabled:opacity-60 disabled:cursor-not-allowed"
                 >
-                  <Sparkles className="w-3.5 h-3.5" />
+                  {isSubmitting
+                    ? <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                    : <Sparkles className="w-3.5 h-3.5" />}
                   Launch FinanceFlow
                 </button>
               </div>

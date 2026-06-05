@@ -160,11 +160,13 @@ export function generateForecast(
     const baseExpenses = Math.max(0, budgetBasedExpenses - activeRecurringExpenses);
 
     // Add variance to non-recurring portion
-    const incomeVariance = 1 + (Math.sin(i * 0.8) * 0.05);
-    const expenseVariance = 1 + (Math.cos(i * 1.2) * 0.08);
+    // const incomeVariance = 1 + (Math.sin(i * 0.8) * 0.05);
+    // const expenseVariance = 1 + (Math.cos(i * 1.2) * 0.08);
 
-    const projectedIncome = Math.round(baseIncome * incomeVariance + recurringIncome);
-    const projectedExpenses = Math.round(baseExpenses * expenseVariance + recurringExpenses);
+    // const projectedIncome = Math.round(baseIncome * incomeVariance + recurringIncome);
+    // const projectedExpenses = Math.round(baseExpenses * expenseVariance + recurringExpenses);
+    const projectedIncome = Math.round(baseIncome + recurringIncome);
+    const projectedExpenses = Math.round(baseExpenses + recurringExpenses);
     const netCashFlow = projectedIncome - projectedExpenses;
     cumulative += netCashFlow;
 

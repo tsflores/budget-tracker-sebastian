@@ -114,10 +114,6 @@ export function generateForecast(
   recurringTransactions: RecurringTransaction[],
   budgetCategories?: BudgetCategory[]
 ): ForecastMonth[] {
-  // If budget categories provided, use total allocated as projected expenses baseline
-  const budgetBasedExpenses = budgetCategories
-    ? budgetCategories.reduce((sum, cat) => sum + cat.allocated, 0)
-    : monthlyExpenses;
   const now = new Date();
   const forecast: ForecastMonth[] = [];
   let cumulative = balance;
@@ -126,6 +122,15 @@ export function generateForecast(
     const monthIndex = (now.getMonth() + i) % 12;
     const year = now.getFullYear() + Math.floor((now.getMonth() + i) / 12);
     const month = `${MONTHS[monthIndex]} ${year}`;
+
+    // For the current month use max(allocated, spent) per category so overspending is reflected.
+    // For future months use allocated as the baseline.
+    const budgetBasedExpenses = budgetCategories
+      ? budgetCategories.reduce((sum, cat) => {
+          const effective = i === 0 ? Math.max(cat.allocated, cat.spent) : cat.allocated;
+          return sum + effective;
+        }, 0)
+      : monthlyExpenses;
 
     // Calculate recurring amounts for this month
     let recurringIncome = 0;

@@ -28,11 +28,17 @@ const frequencies: { value: RecurringFrequency; label: string }[] = [
 export function AddTransactionSheet() {
   const { createTransaction, createRecurring, budgetCategories } = useFinanceContext();
   const dynamicCategories = [...budgetCategories.map(c => c.name), 'Income'];
+  const todayStr = () => {
+    const d = new Date();
+    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+  };
+
   const [open, setOpen] = useState(false);
   const [description, setDescription] = useState('');
   const [amount, setAmount] = useState('');
   const [category, setCategory] = useState('');
   const [type, setType] = useState<'income' | 'expense'>('expense');
+  const [date, setDate] = useState(todayStr);
   const [isRecurring, setIsRecurring] = useState(false);
   const [frequency, setFrequency] = useState<RecurringFrequency>('monthly');
 
@@ -42,23 +48,19 @@ export function AddTransactionSheet() {
       return;
     }
 
-    const d = new Date();
-    const today = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
     const parsedAmount = parseFloat(amount);
 
     if (isRecurring) {
-      // Create both a one-time transaction and a recurring rule
       createRecurring({
         description,
         amount: parsedAmount,
         category,
         type,
         frequency,
-        startDate: today,
+        startDate: date,
       });
-      // Also add the first occurrence as a transaction
       createTransaction({
-        date: today,
+        date,
         description,
         amount: parsedAmount,
         category,
@@ -68,7 +70,7 @@ export function AddTransactionSheet() {
       toast.success(`Recurring ${type} created — will auto-populate ${getFrequencyLabel(frequency).toLowerCase()}`);
     } else {
       createTransaction({
-        date: today,
+        date,
         description,
         amount: parsedAmount,
         category,
@@ -80,6 +82,7 @@ export function AddTransactionSheet() {
     setDescription('');
     setAmount('');
     setCategory('');
+    setDate(todayStr());
     setIsRecurring(false);
     setFrequency('monthly');
     setOpen(false);
@@ -146,6 +149,17 @@ export function AddTransactionSheet() {
               placeholder="What was this for?"
               value={description}
               onChange={(e) => setDescription(e.target.value)}
+              className="h-11 bg-input border-border focus:border-gold focus:ring-gold/20"
+            />
+          </div>
+
+          {/* Date */}
+          <div className="space-y-2">
+            <Label className="text-xs text-muted-foreground uppercase tracking-wider">Date</Label>
+            <Input
+              type="date"
+              value={date}
+              onChange={(e) => setDate(e.target.value)}
               className="h-11 bg-input border-border focus:border-gold focus:ring-gold/20"
             />
           </div>

@@ -13,7 +13,7 @@ const filterOptions = ['All', 'Income', 'Expense', 'Recurring'] as const;
 type FilterType = typeof filterOptions[number];
 
 export default function Transactions() {
-  const { transactions, markAsRecurring } = useFinanceContext();
+  const { transactions, markAsRecurring, removeTransaction } = useFinanceContext();
   const [search, setSearch] = useState('');
   const [filter, setFilter] = useState<FilterType>('All');
   const [sortNewest, setSortNewest] = useState(true);
@@ -126,7 +126,7 @@ export default function Transactions() {
         ) : (
           <div className="glass-card p-2 space-y-0.5">
             {filteredTransactions.map((tx) => (
-              <TransactionItem key={tx.id} transaction={tx} onMakeRecurring={markAsRecurring} />
+              <TransactionItem key={tx.id} transaction={tx} onMakeRecurring={markAsRecurring} onDelete={removeTransaction} />
             ))}
           </div>
         )}

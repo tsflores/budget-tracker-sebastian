@@ -18,10 +18,10 @@ import {
 } from 'recharts';
 
 export default function Home() {
-  const { 
-    balance, monthlyIncome, monthlyExpenses, savingsRate, 
+  const {
+    balance, monthlyIncome, monthlyExpenses, savingsRate,
     transactions, budgetCategories, forecast, recurringTransactions,
-    getTrend, previousMonth 
+    getTrend, previousMonth, removeTransaction
   } = useFinanceContext();
 
   // Real trend calculations from history
@@ -249,7 +249,7 @@ export default function Home() {
         </div>
         <div className="glass-card p-2">
           {transactions.slice(0, 5).map((tx) => (
-            <TransactionItem key={tx.id} transaction={tx} />
+            <TransactionItem key={tx.id} transaction={tx} onDelete={removeTransaction} />
           ))}
         </div>
       </section>

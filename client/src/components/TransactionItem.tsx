@@ -3,10 +3,20 @@
  * Vault Design: Clean row with category icon, recurring badge, context actions
  */
 import { useState } from 'react';
-import { DollarSign, RefreshCw, MoreVertical } from 'lucide-react';
+import { DollarSign, RefreshCw, MoreVertical, Trash2 } from 'lucide-react';
 import { formatCurrency } from '@/lib/finance-store';
 import type { Transaction, RecurringFrequency } from '@/lib/finance-store';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
 import { resolveIcon } from '@/components/CategoryManageDrawer';
 import { useFinanceContext } from '@/contexts/FinanceContext';
 
@@ -21,15 +31,17 @@ const frequencyOptions: { value: RecurringFrequency; label: string }[] = [
 interface TransactionItemProps {
   transaction: Transaction;
   onMakeRecurring?: (transactionId: string, frequency: RecurringFrequency) => void;
+  onDelete?: (transactionId: string) => void;
 }
 
-export function TransactionItem({ transaction, onMakeRecurring }: TransactionItemProps) {
+export function TransactionItem({ transaction, onMakeRecurring, onDelete }: TransactionItemProps) {
   const { budgetCategories } = useFinanceContext();
   const matchedCategory = budgetCategories.find(c => c.name === transaction.category);
   const Icon = matchedCategory ? resolveIcon(matchedCategory.icon) : DollarSign;
   const isIncome = transaction.type === 'income';
   const [popoverOpen, setPopoverOpen] = useState(false);
-  
+  const [deleteOpen, setDeleteOpen] = useState(false);
+
   const formattedDate = new Date(transaction.date + 'T00:00:00').toLocaleDateString('en-US', {
     month: 'short',
     day: 'numeric',
@@ -37,6 +49,12 @@ export function TransactionItem({ transaction, onMakeRecurring }: TransactionIte
 
   const handleMakeRecurring = (frequency: RecurringFrequency) => {
     onMakeRecurring?.(transaction.id, frequency);
+    setPopoverOpen(false);
+  };
+
+  const handleDelete = () => {
+    onDelete?.(transaction.id);
+    setDeleteOpen(false);
     setPopoverOpen(false);
   };
 
@@ -79,33 +97,67 @@ export function TransactionItem({ transaction, onMakeRecurring }: TransactionIte
         {isIncome ? '+' : '-'}{formatCurrency(transaction.amount)}
       </span>
 
-      {/* Make Recurring Action (only for non-recurring) */}
-      {!transaction.isRecurring && onMakeRecurring && (
+      {/* Actions Menu */}
+      {(onMakeRecurring || onDelete) && (
         <Popover open={popoverOpen} onOpenChange={setPopoverOpen}>
           <PopoverTrigger asChild>
             <button className="p-1.5 opacity-0 group-hover:opacity-100 focus:opacity-100 text-muted-foreground hover:text-foreground transition-all duration-150 rounded-md hover:bg-accent">
               <MoreVertical className="w-4 h-4" />
             </button>
           </PopoverTrigger>
-          <PopoverContent 
-            align="end" 
+          <PopoverContent
+            align="end"
             className="w-48 p-1.5 bg-card border-border"
           >
-            <p className="px-2 py-1.5 text-[10px] text-muted-foreground uppercase tracking-wider font-medium">
-              Make Recurring
-            </p>
-            {frequencyOptions.map((opt) => (
+            {!transaction.isRecurring && onMakeRecurring && (
+              <>
+                <p className="px-2 py-1.5 text-[10px] text-muted-foreground uppercase tracking-wider font-medium">
+                  Make Recurring
+                </p>
+                {frequencyOptions.map((opt) => (
+                  <button
+                    key={opt.value}
+                    onClick={() => handleMakeRecurring(opt.value)}
+                    className="w-full flex items-center gap-2 px-2 py-2 text-sm text-foreground hover:bg-accent rounded-md transition-colors duration-100"
+                  >
+                    <RefreshCw className="w-3.5 h-3.5 text-gold" />
+                    {opt.label}
+                  </button>
+                ))}
+              </>
+            )}
+            {onDelete && (
               <button
-                key={opt.value}
-                onClick={() => handleMakeRecurring(opt.value)}
-                className="w-full flex items-center gap-2 px-2 py-2 text-sm text-foreground hover:bg-accent rounded-md transition-colors duration-100"
+                onClick={() => {
+                  setPopoverOpen(false);
+                  setDeleteOpen(true);
+                }}
+                className="w-full flex items-center gap-2 px-2 py-2 text-sm text-danger hover:bg-danger/10 rounded-md transition-colors duration-100"
               >
-                <RefreshCw className="w-3.5 h-3.5 text-gold" />
-                {opt.label}
+                <Trash2 className="w-3.5 h-3.5" />
+                Delete
               </button>
-            ))}
+            )}
           </PopoverContent>
         </Popover>
+      )}
+
+      {/* Delete Confirmation */}
+      {onDelete && (
+        <AlertDialog open={deleteOpen} onOpenChange={setDeleteOpen}>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Delete transaction?</AlertDialogTitle>
+              <AlertDialogDescription>
+                This will permanently delete "{transaction.description}" and adjust your balance accordingly. This cannot be undone.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel>Cancel</AlertDialogCancel>
+              <AlertDialogAction onClick={handleDelete}>Delete</AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
       )}
     </div>
   );

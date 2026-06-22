@@ -107,10 +107,23 @@ export function TransactionItem({ transaction, onMakeRecurring, onDelete }: Tran
           </PopoverTrigger>
           <PopoverContent
             align="end"
-            className="w-48 p-1.5 bg-card border-border"
+            className="w-48 p-1.5 bg-card border-border max-h-[min(20rem,var(--radix-popover-content-available-height))] overflow-y-auto"
           >
+            {onDelete && (
+              <button
+                onClick={() => {
+                  setPopoverOpen(false);
+                  setDeleteOpen(true);
+                }}
+                className="w-full flex items-center gap-2 px-2 py-2 text-sm text-danger hover:bg-danger/10 rounded-md transition-colors duration-100"
+              >
+                <Trash2 className="w-3.5 h-3.5" />
+                Delete
+              </button>
+            )}
             {!transaction.isRecurring && onMakeRecurring && (
               <>
+                {onDelete && <div className="my-1 h-px bg-border" />}
                 <p className="px-2 py-1.5 text-[10px] text-muted-foreground uppercase tracking-wider font-medium">
                   Make Recurring
                 </p>
@@ -125,18 +138,6 @@ export function TransactionItem({ transaction, onMakeRecurring, onDelete }: Tran
                   </button>
                 ))}
               </>
-            )}
-            {onDelete && (
-              <button
-                onClick={() => {
-                  setPopoverOpen(false);
-                  setDeleteOpen(true);
-                }}
-                className="w-full flex items-center gap-2 px-2 py-2 text-sm text-danger hover:bg-danger/10 rounded-md transition-colors duration-100"
-              >
-                <Trash2 className="w-3.5 h-3.5" />
-                Delete
-              </button>
             )}
           </PopoverContent>
         </Popover>
